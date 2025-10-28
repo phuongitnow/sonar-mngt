@@ -1,0 +1,70 @@
+spring:
+  application:
+    name: sonarqube-admin-app
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/sonarqube_admin
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:admin123}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# SonarQube Configuration
+sonarqube:
+  url: ${SONARQUBE_URL:http://sonarqube:9000}
+  token: ${SONARQUBE_TOKEN:}
+  username: ${SONARQUBE_USERNAME:admin}
+  password: ${SONARQUBE_PASSWORD:admin}
+
+# Application Configuration
+app:
+  cleanup:
+    cron: ${CLEANUP_CRON:0 0 2 * * *}
+    days-threshold: ${DAYS_THRESHOLD:14}
+    notification-email: ${NOTIFICATION_EMAIL:admin@example.com}
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# Swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# Server
+server:
+  port: 6996
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="1" author="admin">
+        <createTable tableName="project_snapshots">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_key" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="project_name" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lines_of_code" type="BIGINT"/>
+            <column name="last_scan_date" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        
+        <createIndex indexName="idx_project_snapshots_project_key" tableName="project_snapshots">
+            <column name="project_key"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_project_snapshots_last_scan_date" tableName="project_snapshots">
+            <column name="last_scan_date"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
+

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sonarqube-admin-db
+    environment:
+      POSTGRES_DB: sonarqube_admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "2345:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d sonarqube_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sonarqube-admin-api
+    environment:
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+      SONARQUBE_URL: ${SONARQUBE_URL:-http://sonarqube:9000}
+      SONARQUBE_TOKEN: ${SONARQUBE_TOKEN:-}
+      SONARQUBE_USERNAME: ${SONARQUBE_USERNAME:-admin}
+      SONARQUBE_PASSWORD: ${SONARQUBE_PASSWORD:-admin}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-admin@example.com}
+      DAYS_THRESHOLD: ${DAYS_THRESHOLD:-14}
+      CLEANUP_CRON: ${CLEANUP_CRON:-0 0 2 * * *}
+    ports:
+      - "6996:6996"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:6996/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sonarqube-admin-ui
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
+

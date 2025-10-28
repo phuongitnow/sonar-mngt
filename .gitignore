@@ -1,0 +1,40 @@
+# Java
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+*.class
+*.jar
+*.war
+*.ear
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Docker
+.env
+docker-compose.override.yml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+

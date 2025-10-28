@@ -1,0 +1,64 @@
+<div class="container">
+  <header class="header">
+    <h1>🎯 SonarQube Administration</h1>
+    <p>Manage projects and keep LOC under 1,000,000</p>
+  </header>
+
+  <div class="actions-bar">
+    <button class="btn btn-primary" (click)="loadStatistics()" [disabled]="loading">
+      {{ loading ? 'Loading...' : '🔄 Refresh' }}
+    </button>
+    <button class="btn btn-primary" (click)="syncProjects()" [disabled]="loading">
+      📥 Sync Projects
+    </button>
+    <button class="btn btn-danger" (click)="executeCleanup()" [disabled]="cleanupLoading">
+      {{ cleanupLoading ? 'Executing...' : '🧹 Execute Cleanup' }}
+    </button>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    ⚠️ {{ error }}
+  </div>
+
+  <div *ngIf="statistics" class="stats-container">
+    <div class="card stat-card">
+      <div class="stat-number">{{ statistics.totalProjects }}</div>
+      <div class="stat-label">Total Projects</div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-number">{{ formatNumber(statistics.totalLinesOfCode) }}</div>
+      <div class="stat-label">Lines of Code</div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-number">{{ formatNumber(statistics.maxLinesOfCode) }}</div>
+      <div class="stat-label">License Limit (LOC)</div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-number">{{ statistics.projectsToDelete }}</div>
+      <div class="stat-label">Projects to Delete</div>
+    </div>
+  </div>
+
+  <div *ngIf="statistics" class="card">
+    <h2>License Usage</h2>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="statistics.percentageUsage"></div>
+    </div>
+    <p style="margin-top: 12px; color: #666;">
+      {{ statistics.percentageUsage.toFixed(2) }}% of license used
+    </p>
+  </div>
+
+  <div *ngIf="lastCleanupResult" class="card">
+    <h2>Last Cleanup Result</h2>
+    <p><strong>Status:</strong> {{ lastCleanupResult.status }}</p>
+    <p><strong>Projects Deleted:</strong> {{ lastCleanupResult.projectsDeleted }}</p>
+    <p><strong>LOC Deleted:</strong> {{ formatNumber(lastCleanupResult.linesOfCodeDeleted) }}</p>
+    <p><strong>LOC Remaining:</strong> {{ formatNumber(lastCleanupResult.linesOfCodeRemaining) }}</p>
+    <p><strong>Message:</strong> {{ lastCleanupResult.message }}</p>
+  </div>
+</div>
+
